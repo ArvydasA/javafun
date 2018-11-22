@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+    <head>
+    {% block head %}
+    <title>{{title}}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+		<script src="{{ url_for('static', filename='js/jquery-1.11.2.min.js') }}"></script>
+    {% endblock head %}
+
+    <style>
+        .form-div {
+            width: 800px;
+            margin: 20px 40px;
+        }
+        .col-md-8 {
+            width: 400px;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-md-8">
+
+            <div class="form-div">
+            <form id="power-form"  class="form-horizontal" role="form">
+                <div class="form-group">
+                    <div class="col-xs-3">
+                     <label>Operating Income</label>
+                    <input type="text" name="op_income" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-3">
+                    <label>Tax rate %</label>
+                    <input type="text" name="tax_rate" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label>Depreciation and Amortization</label>
+                    <input type="text" name="dep_amort" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label>Captial Expenditure</label>
+                    <input type="text" name="capex" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label>Growth rate for years 1 through 10</label>
+                    <input type="text" name="growth" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label>Growth rate after year 10 (terminal)</label>
+                    <input type="text" name="growth_perpetuity" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label>Discount %</label>
+                    <input type="text" name="discount_pct" class="form-control">
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <div class="col-xs-3">
+                        <label>Cash balance</label>
+                    <input type="text" name="cash_balance" class="form-control">
+                    </div>
+                </div>
+                                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label>Debt balance</label>
+                    <input type="text" name="debt_balance" class="form-control">
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <div class="col-xs-3">
+                        <label>Shares Outstanding</label>
+                    <input type="text" name="shares_outstanding" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">calculate</button>
+                    </div>
+                </div>
+              </form>
+          </div>
+              </div>
+              <div class="col-md-4">
+
+                  <h2>Results</h2>
+                    <div id="results">
+                    </div>
+              </div>
+        </div>
+         <script>
+            // magic.js
+            $(document).ready(function() {
+
+                $('#power-form').submit(function(event) {
+
+                    $('#results').empty();
+                    var formData = {
+                        'op_income'    : $('input[name=op_income]').val(),
+                        'tax_rate'     : $('input[name=tax_rate]').val(),
+                        'dep_amort'    : $('input[name=dep_amort]').val(),
+                        'capex'        : $('input[name=capex]').val(),
+                        'discount_pct' : $('input[name=discount_pct]').val(),
+                        'adjustment'   : $('input[name=adjustment]').val(),
+                        'cash_balance' : $('input[name=cash_balance]').val(),
+                        'debt_balance' : $('input[name=debt_balance]').val(),
+                        'shares_outstanding' : $('input[name=shares_outstanding]').val(),
+                        'growth'       : $('input[name=growth]').val(),
+                        'growth_perpetuity' : $('input[name=growth_perpetuity]').val(),
+                    };
+
+                    $.ajax({
+                        type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+                        url 		: '/calculate', // the url where we want to POST
+                        data 		: formData, // our data object
+                        dataType 	: 'json', // what type of data do we expect back from the server
+                        encode      : true
+                    }).done(function(data) {
+
+                        if(data.success){
+                            el = '<h4><p> Free Cash Flow = $'+ data._free_cash_flow + '</p></h4>';
+                            el +=  '<h4><p>Discount Free Cash Flow = $'  + data._discount_free_cash_flow+ '</p></h4>';
+                        }else{
+                            el = '<h4> ' + data.result + ' </h4>'
+                        }
+
+                        $('#results').append(el);
+                    });
+
+                    event.preventDefault();
+                });
+
+            });
+         </script>
+    </body>
+</html>
+

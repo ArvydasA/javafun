@@ -1,0 +1,22 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "g3kko"
+
+
+[packages]
+
+requests = "*"
+flask = "*"
+flask-sqlalchemy = "*"
+pymysql = "*"
+
+
+[dev-packages]
+
+
+
+[requires]
+
+python_version = "3.6"
